@@ -1,106 +1,59 @@
-﻿namespace OOBProject    
+﻿using OOBProject;
+using System.Text;
+
+Console.OutputEncoding = Encoding.UTF8;
+Console.BufferHeight = 60;
+Console.BufferWidth = 120;
+
+var szachownica = new szachownica();
+var player = new player(0, 0);
+var renderer = new GameGUI();
+int selectedIndex = -1;
+
+Console.Clear();
+renderer.Make(szachownica, player, selectedIndex);
+
+while (true)
 {
-    public abstract class GameTile
-    {
-        public char symbol;
-        public int positionx;
-        public int positiony;
-    }
-    public class Room  
-    {
-        public GameTile[][] plane;
+    var key = Console.ReadKey(true).Key;
 
-    }
-    public class Player
+    switch (key)
     {
-        public bool w;
-        public bool a;
-        public bool s;
-        public bool d;
-        public int positionx { get; set; }
-        public int positiony { get; set; }
-        public int Health { get; set; }
-        public int Strength {  get; set; }
-        public int Dexterity { get; set; }
-        public int Inteligence { get; set; }
-        public int Wisdom { get; set; }
-        public int Luck { get; set; }
-        public int Agility { get; set; }
-        public bool RHandstate;
-        public IItem RHand;
-        public bool LHandstate;
-        public string LHand;
+        case ConsoleKey.W: player.Movement(0, -1, szachownica); break;
+        case ConsoleKey.S: player.Movement(0, 1, szachownica); break;
+        case ConsoleKey.D: player.Movement(1, 0, szachownica); break;
+        case ConsoleKey.A: player.Movement(-1, 0, szachownica); break;
 
+        case ConsoleKey.E:
+            player.PickUpszach(szachownica);
+            selectedIndex = -1;
+            break;
 
+        case ConsoleKey.D1: case ConsoleKey.NumPad1: selectedIndex = 0; break;
+        case ConsoleKey.D2: case ConsoleKey.NumPad2: selectedIndex = 1; break;
+        case ConsoleKey.D3: case ConsoleKey.NumPad3: selectedIndex = 2; break;
+        case ConsoleKey.D4: case ConsoleKey.NumPad4: selectedIndex = 3; break;
+        case ConsoleKey.D5: case ConsoleKey.NumPad5: selectedIndex = 4; break;
+        case ConsoleKey.D6: case ConsoleKey.NumPad6: selectedIndex = 5; break;
+        case ConsoleKey.D7: case ConsoleKey.NumPad7: selectedIndex = 6; break;
+        case ConsoleKey.D8: case ConsoleKey.NumPad8: selectedIndex = 7; break;
+        case ConsoleKey.D9: case ConsoleKey.NumPad9: selectedIndex = 8; break;
 
+        case ConsoleKey.Q:
+            if (selectedIndex >= 0 && selectedIndex < player.Inventory.Count)
+                player.Equip(player.Inventory[selectedIndex]);
+            selectedIndex = -1;
+            break;
+
+        case ConsoleKey.F:
+            if (selectedIndex >= 0 && selectedIndex < player.Inventory.Count)
+                player.DropI(player.Inventory[selectedIndex],szachownica);
+            selectedIndex = -1;
+            break;
+        case ConsoleKey.G:
+           player.DropH(szachownica);
+            break;
     }
-    public interface IItem
-    {
-        char Getchar();
-    }
-    public abstract class Item : IItem
-    {
-        public abstract bool handiness { get; }
-        public abstract char Getchar();
-    }
-   public  class Gold : Item
-    {
-        public override bool handiness => false;
-        public override char Getchar() => 'G';
-    }
-    public class Coin : Item
-    {
-        public override bool handiness => false;
-        public override char Getchar() => 'C';
-    }
-    public abstract class Weapon : Item
-    {
-       public abstract int WeaponDamage {  get; }//false - one hand ;true - 2 hand
-        public override char Getchar() => 'W';
-    }
-    public class ShortSword : Weapon
-    {
-        public override int WeaponDamage => 6;
-        public override bool handiness =>false ;
-        public override char Getchar() => 's';
-    }
-    public class LongSword : Weapon
-    {
-        public override int WeaponDamage => 10;
-        public override bool handiness => true;
-        public override char Getchar() => 'S';
-    }
-    public class Spear : Weapon
-    {
-        public override int WeaponDamage => 8;
-        public override bool handiness => true;
-        public override char Getchar() => 'P';
-    }
-    public class UNIteam : Item
-    {
-        public override char Getchar() => 'U';
-        public override bool handiness => false;
-    }
-    public class Ingot : UNIteam
-    {
-        public override char Getchar() => 'I';
-        public override bool handiness => false;
-    }
-    public class Plank : UNIteam
-    {
-        public override char Getchar() => 'p';
-        public override bool handiness =>true;
-    }
-    public class Torch : UNIteam
-    {
-        public override char Getchar() => 'T';
-        public override bool handiness => false;
-    }
-    internal class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello, World!");
-        }
-    }
+
+    renderer.Make(szachownica, player, selectedIndex);
 }
